@@ -1,0 +1,57 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <!-- Создание таблицы genres -->
+    <changeSet author="Dmitry Kripan" id="createTableCarParts">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="carparts"/>
+            </not>
+        </preConditions>
+        <createTable tableName="carparts">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="carParts_pkey"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="category" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="price" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_available" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Dmitry Kripan" id="Create-car-parts">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0"><![CDATA[
+                select count(*)
+                from carparts
+                ]]>
+                </sqlCheck>
+        </preConditions>
+
+        <insert tableName="carparts">
+            <column name="name" value="Air filter"/>
+            <column name="category" value="FILTERS"/>
+            <column name="price" value="20"/>
+            <column name="is_available" value="true"/>
+        </insert>
+        <insert tableName="carparts">
+            <column name="name" value="Engine oil"/>
+            <column name="category" value="TECHNICAL_FLUIDS"/>
+            <column name="price" value="100"/>
+            <column name="is_available" value="true"/>
+        </insert>
+
+    </changeSet>
+
+</databaseChangeLog>

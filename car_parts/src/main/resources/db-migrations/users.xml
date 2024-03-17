@@ -1,0 +1,108 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet author="Dmitry Kripan" id="Create-table-roles">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="roles"/>
+            </not>
+        </preConditions>
+        <createTable tableName="roles">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Dmitry Kripan" id="createTableUsers">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="users"/>
+            </not>
+        </preConditions>
+        <createTable tableName="users">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="users_pkey"/>
+            </column>
+            <column name="first_name" type="VARCHAR(255)">
+            </column>
+            <column name="last_name" type="VARCHAR(255)">
+            </column>
+            <column name="role_id" type="bigint">
+                <constraints nullable="false" foreignKeyName="fk_user_role" references="roles(id)"/>
+            </column>
+            <column name="login" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="phone" type="BIGINT">
+            </column>
+            <column name="email" type="VARCHAR(255)">
+            </column>
+            <column name="address" type="VARCHAR(255)">
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Dmitry Kripan" id="Create-users">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0"><![CDATA[
+                select count(*)
+                from roles
+                where name = 'ADMIN'
+                ]]>
+                </sqlCheck>
+        </preConditions>
+
+        <insert tableName="roles">
+            <!-- Id is auto incremented -->
+            <column name="name" value="ADMIN"/>
+        </insert>
+
+        <insert tableName="users">
+            <column name="first_name" value="admin"/>
+            <column name="last_name" value="admin"/>
+            <column name="role_id" valueComputed="(select id from roles where name = 'ADMIN')"/>
+            <column name="status" value="OK"/>
+            <column name="login" value="admin"/>
+            <column name="password" value="$2a$10$8COSbN384g3o8V2AD0j./O86T3daOwUgKi7JLeoAg4lLq0Yx1/FOW"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="Dmitry Kripan" id="Create-user">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0"><![CDATA[
+                select count(*)
+                from roles
+                where name = 'USER'
+                ]]></sqlCheck>
+        </preConditions>
+
+        <insert tableName="roles">
+            <!-- Id is auto incremented -->
+            <column name="name" value="USER"/>
+        </insert>
+
+        <insert tableName="users">
+            <column name="first_name" value="Dmitry"/>
+            <column name="last_name" value="Kripan"/>
+            <column name="role_id" valueComputed="(select id from roles where name = 'USER')"/>
+            <column name="status" value="OK"/>
+            <column name="login" value="kripanda"/>
+            <column name="password" value="$2a$10$DtIVMGWHJNj/7N3mC1CXVuKp0UF7E3BZHlKhECXz74ouy2h3qra4y"/>
+        </insert>
+
+    </changeSet>
+
+</databaseChangeLog>
