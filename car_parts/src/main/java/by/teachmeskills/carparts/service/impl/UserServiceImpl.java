@@ -37,10 +37,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDto update(UserDto userDto) {
-        userRepository.findById(userDto.getId()).ifPresent(user -> {
-            userMapper.partialUpdate(userDto, user);
-            userRepository.save(user);
-        });
+        userRepository.findById(userDto.getId()).ifPresent(userRepository::save);
         return getUserById(userDto.getId());
     }
 

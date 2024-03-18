@@ -27,8 +27,4 @@ public interface UserMapper {
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         roleService.findByName(userDto.getRole()).ifPresent(user::setRole);
     }
-
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    User partialUpdate(UserDto userDto, @MappingTarget User user);
-
 }
