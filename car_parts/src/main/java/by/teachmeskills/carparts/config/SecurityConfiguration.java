@@ -4,6 +4,7 @@ import by.teachmeskills.carparts.config.security.JwtFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -15,6 +16,11 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
+import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
+
+import static by.teachmeskills.carparts.controller.AuthController.AUTH_REQUEST_MAPPING;
+import static by.teachmeskills.carparts.entity.RoleEnum.ADMIN;
 
 
 @EnableWebSecurity
@@ -35,9 +41,21 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                .exceptionHandling().authenticationEntryPoint(new Http403ForbiddenEntryPoint())
+                .and()
                 .authorizeRequests()
-                .antMatchers("/**").permitAll();
+                .antMatchers("/", AUTH_REQUEST_MAPPING, "/swagger-ui/**", "/docs.html", "/api/docs.yaml/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/user").permitAll()
+                .and()
+                .authorizeRequests()
+                .antMatchers("/api/carparts/*").hasAnyAuthority(ADMIN.name())
+                .antMatchers("/api/user/*").hasAnyAuthority(ADMIN.name())
+                .antMatchers("/api/**").authenticated()
+                .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .addFilterAfter(jwtFilter, AnonymousAuthenticationFilter.class)
+                .logout();
     }
 
 

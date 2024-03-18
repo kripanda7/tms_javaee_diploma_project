@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserDto update(UserDto userDto) {
         userRepository.findById(userDto.getId()).ifPresent(user -> {
-//            userMapper.partialUpdate(userDto, user);
+            userMapper.partialUpdate(userDto, user);
             userRepository.save(user);
         });
         return getUserById(userDto.getId());

@@ -4,10 +4,12 @@ import by.teachmeskills.carparts.dto.UserDto;
 import by.teachmeskills.carparts.entity.User;
 import by.teachmeskills.carparts.service.RoleService;
 import org.mapstruct.AfterMapping;
+import org.mapstruct.BeanMapping;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -25,5 +27,8 @@ public interface UserMapper {
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         roleService.findByName(userDto.getRole()).ifPresent(user::setRole);
     }
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    User partialUpdate(UserDto userDto, @MappingTarget User user);
 
 }

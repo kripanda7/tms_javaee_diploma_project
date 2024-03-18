@@ -9,9 +9,6 @@ spring:
         format_sql: true
     generate-ddl: false
   datasource:
-    url: jdbc:postgresql://localhost:5432/tms_database
-    username: kripanda
-    password: 12345
     driver-class-name: org.postgresql.Driver
     hikari:
       leak-detection-threshold: 5000 # in msecs
